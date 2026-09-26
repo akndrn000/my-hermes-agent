@@ -2,7 +2,7 @@
 
 Bot AI pribadi berbasis **Hermes Agent** (open-source resmi dari Nous Research),
 di-deploy di **Railway**, terhubung ke **Telegram** dan **Discord** sekaligus,
-pakai **Google Gemini** (`gemini-3.8-flash`) sebagai satu-satunya provider model.
+pakai **Google Gemini** (`gemini-3.6-flash`) sebagai satu-satunya provider model.
 
 ---
 
@@ -35,7 +35,7 @@ Gemini dan data pribadi kamu** (token bot, ID user) di Railway.
 ```
 Chat masuk
    ↓
-Google Gemini — gemini-3.8-flash   ← satu-satunya model, tanpa fallback
+Google Gemini — gemini-3.6-flash   ← satu-satunya model, tanpa fallback
 ```
 
 Model di atas jalan lewat endpoint kompatibel-OpenAI milik Google
@@ -89,7 +89,7 @@ disarankan).
 2. Klik **Create API key** (pilih atau buat project Google Cloud kalau diminta).
 3. Copy API key-nya.
 
-> ℹ️ `gemini-3.8-flash` punya kuota gratis (free tier) di Google AI Studio.
+> ℹ️ `gemini-3.6-flash` punya kuota gratis (free tier) di Google AI Studio.
 > Kalau kuota gratis habis / kena rate limit, kamu perlu upgrade ke billing
 > berbayar di Google Cloud Console kalau mau tetap pakai model ini terus-menerus.
 
@@ -122,7 +122,7 @@ Isi di Railway → Variables (tanpa tanda kutip di sekitar value):
 
 ```env
 # ===== WAJIB =====
-GEMINI_API_KEY=ganti-punya-kamu
+GOOGLE_API_KEY=ganti-punya-kamu
 
 TELEGRAM_BOT_TOKEN=ganti-token-botfather
 TELEGRAM_HOME_CHANNEL=ganti-user-id-kamu
@@ -156,7 +156,7 @@ Mau ganti salah satu nilai di atas, atau ganti model default? Ada 2 cara:
 
 | Urutan | Model | Model ID | Kenapa |
 |---|---|---|---|
-| Utama (satu-satunya) | Gemini 3.8 Flash | `gemini-3.8-flash` | Cepat, murah/gratis (free tier), tanpa fallback lain |
+| Utama (satu-satunya) | Gemini 3.6 Flash | `gemini-3.6-flash` | Cepat, murah/gratis (free tier), tanpa fallback lain |
 
 > ⚠️ Katalog model Gemini bisa berubah sewaktu-waktu (misalnya model baru
 > menggantikan yang lama, atau nama preview jadi stabil). Kalau ada error
@@ -191,7 +191,7 @@ Kirim langsung di Telegram/Discord (sesi terpisah per platform):
 | "Permission denied" di /opt/data | Pastikan deploy dari GitHub repo (Dockerfile), BUKAN "Deploy a Docker Image" langsung, dan Custom Start Command di Settings dikosongkan |
 | Bot tidak balas (Telegram) | Cek TELEGRAM_ALLOWED_USERS/TELEGRAM_HOME_CHANNEL — baca log baris "Blocked unauthorized user" buat tahu ID yang benar |
 | Bot tidak balas (Discord) | Cek DISCORD_ALLOWED_CHANNELS, atau kirim /sethome di channel itu |
-| Error 401 / 403 | GEMINI_API_KEY salah/belum diisi, atau API key belum diaktifkan untuk Generative Language API |
+| Error 401 / 403 | GOOGLE_API_KEY salah/belum diisi, atau API key belum diaktifkan untuk Generative Language API |
 | "Model not found" | Nama model Gemini berubah/di-deprecate — update nama model di Dockerfile |
 | Error 429 (kena limit) | Kuota gratis Gemini habis — tunggu reset kuota atau aktifkan billing di Google Cloud Console |
 | Reasoning mentah di chat | Kirim /reasoning hide |
