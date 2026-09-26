@@ -28,27 +28,27 @@ if not isinstance(cfg, dict):
     cfg = {}
 
 # ============================================================
-# PRIMARY MODEL - OpenCode Zen (satu-satunya provider)
+# PRIMARY MODEL - Google Gemini (satu-satunya provider)
 # ============================================================
 
 cfg["model"] = {
-    "provider": "opencode",
-    "default": "deepseek-v4-flash-free"
+    "provider": "gemini",
+    "default": "gemini-3.8-flash"
 }
 
 cfg.pop("fallback_model", None)
 
 # ============================================================
-# CUSTOM PROVIDER - OpenCode Zen
-# (endpoint terpusat, kompatibel format OpenAI chat/completions)
+# CUSTOM PROVIDER - Google Gemini
+# (endpoint kompatibel format OpenAI chat/completions)
 # ============================================================
 
 providers = {}
 
-if os.environ.get("OPENCODE_API_KEY"):
-    providers["opencode"] = {
-        "api": "https://opencode.ai/zen/v1",
-        "key_env": "OPENCODE_API_KEY",
+if os.environ.get("GEMINI_API_KEY"):
+    providers["gemini"] = {
+        "api": "https://generativelanguage.googleapis.com/v1beta/openai",
+        "key_env": "GEMINI_API_KEY",
         "transport": "chat_completions"
     }
 
@@ -58,14 +58,10 @@ else:
     cfg.pop("providers", None)
 
 # ============================================================
-# FALLBACK CHAIN - model gratis lain di dalam OpenCode Zen
+# FALLBACK CHAIN - tidak ada, hanya satu model (Gemini 3.5 Flash)
 # ============================================================
 
 fallbacks = []
-
-if os.environ.get("OPENCODE_API_KEY"):
-    fallbacks.append({"provider": "opencode", "model": "mimo-v2.5-free"})
-    fallbacks.append({"provider": "opencode", "model": "nemotron-3-ultra-free"})
 
 cfg["fallback_providers"] = fallbacks
 
@@ -78,13 +74,16 @@ print("HERMES MODEL CONFIG")
 print("========================================")
 print("")
 print("PRIMARY:")
-print("  opencode")
-print("  deepseek-v4-flash-free")
+print("  gemini")
+print("  gemini-3.8-flash")
 print("")
 print("FALLBACKS:")
 
-for i, item in enumerate(fallbacks, 1):
-    print(f"  {i}. {item['provider']} -> {item['model']}")
+if fallbacks:
+    for i, item in enumerate(fallbacks, 1):
+        print(f"  {i}. {item['provider']} -> {item['model']}")
+else:
+    print("  (tidak ada)")
 
 print("")
 print("========================================")
