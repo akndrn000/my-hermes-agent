@@ -1,0 +1,10 @@
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+# Hermes gateway tidak punya endpoint HTTP publik kalau API server tidak
+# diaktifkan, jadi kita tidak set healthcheckPath supaya Railway tidak
+# salah menandai deployment sebagai gagal karena tidak ada respons HTTP.
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10
