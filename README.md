@@ -1,8 +1,8 @@
-# 🤖 Hermes Agent — Telegram & Discord Bot (Railway, Google Gemini)
+# 🤖 Hermes Agent — Telegram & Discord Bot (Railway, Groq)
 
-Bot AI pribadi berbasis **Hermes Agent** (open-source resmi dari Nous Research),
-di-deploy di **Railway**, terhubung ke **Telegram** dan **Discord** sekaligus,
-pakai **Google Gemini** (`gemini-3.6-flash`) sebagai satu-satunya provider model.
+Bot AI pribadi berbasis **Hermes Agent** (open-source resmi dari Nous Research),  
+di-deploy di **Railway**, terhubung ke **Telegram** dan **Discord** sekaligus,  
+menggunakan **Groq** dengan model **OpenAI GPT-OSS 120B** sebagai satu-satunya provider model.
 
 ---
 
@@ -24,45 +24,76 @@ pakai **Google Gemini** (`gemini-3.6-flash`) sebagai satu-satunya provider model
 
 Repo ini berisi konfigurasi siap pakai untuk men-deploy **Hermes Agent resmi**
 (`nousresearch/hermes-agent`, bukan fork/modifikasi) ke Railway sebagai bot
-Telegram + Discord, dengan **Google Gemini** sebagai provider model tunggal.
+Telegram + Discord, dengan **Groq** sebagai provider model tunggal.
 
-Semua nama model & pengaturan teknis (provider, model, timezone, dll) sudah
-**di-hardcode di dalam `Dockerfile`** — jadi kamu cuma perlu isi **API key
-Gemini dan data pribadi kamu** (token bot, ID user) di Railway.
+Model utama yang digunakan:
+
+```text
+OpenAI GPT-OSS 120B
+Model ID: openai/gpt-oss-120b
+Provider: Groq
+```
+
+Semua konfigurasi teknis utama seperti provider, model, timezone, dan pengaturan
+Discord sudah **di-hardcode di dalam `Dockerfile`**.
+
+API key dan data pribadi tetap dimasukkan melalui Railway Variables.
 
 ### Alur model
 
-```
+```text
 Chat masuk
-   ↓
-Google Gemini — gemini-3.6-flash   ← satu-satunya model, tanpa fallback
+    ↓
+Groq
+    ↓
+OpenAI GPT-OSS 120B
+    ↓
+Jawaban Hermes Agent
 ```
 
-Model di atas jalan lewat endpoint kompatibel-OpenAI milik Google
-(`https://generativelanguage.googleapis.com/v1beta/openai`), pakai **satu
-API key Gemini**, jadi nggak perlu daftar ke provider lain.
+Hermes menggunakan endpoint OpenAI-compatible milik Groq:
+
+```text
+https://api.groq.com/openai/v1
+```
+
+Konfigurasi Hermes menggunakan custom provider:
+
+```yaml
+providers:
+  groq:
+    api: https://api.groq.com/openai/v1
+    key_env: GROQ_API_KEY
+
+model:
+  default: openai/gpt-oss-120b
+  provider: custom:groq
+```
+
+Tidak ada fallback provider dalam konfigurasi ini.
 
 ---
 
 ## 📁 Struktur Repo
 
-```
+```text
 repo-ini/
-├── Dockerfile       # Instruksi build + provider/model sudah hardcode
-├── railway.toml     # Konfigurasi deploy Railway (restart policy)
-├── .gitignore       # Cegah file .env lokal ke-upload
-└── README.md        # Dokumen ini
+├── Dockerfile       # Build + konfigurasi provider/model
+├── railway.toml     # Konfigurasi deploy Railway
+├── .gitignore       # Mencegah file rahasia ikut ter-upload
+└── README.md        # Dokumentasi ini
 ```
 
-Upload 4 file ini ke root repo GitHub kamu (bikin repo baru, **Private**
-disarankan).
+Upload 4 file tersebut ke root repository GitHub.
 
-> ⚠️ **Jangan** pakai opsi "Deploy a Docker Image" langsung dari Railway
-> (pilih image dari Docker Hub tanpa Dockerfile). Itu berisiko menimpa
-> entrypoint resmi image (s6-overlay) dan bikin error "Permission denied"
-> di `/opt/data`. Selalu deploy dari repo GitHub berisi `Dockerfile` di
-> atas, dan biarkan **Custom Start Command di Railway kosong** — biar
-> Docker `CMD` bawaan Dockerfile ini yang jalan.
+**Private repository disarankan.**
+
+> ⚠️ Jangan deploy sebagai "Deploy a Docker Image" langsung dari Railway.
+>
+> Gunakan repository GitHub yang berisi `Dockerfile`, kemudian biarkan
+> Dockerfile menentukan proses startup.
+>
+> **Custom Start Command di Railway harus dikosongkan.**
 
 ---
 
@@ -70,116 +101,223 @@ disarankan).
 
 ### Langkah 1 — Buat Bot Telegram
 
-1. Chat **@BotFather** → `/newbot` → ikuti instruksi.
-2. Simpan **Bot Token** (format: `123456789:AAxxxxxxxxxxxxxxxxxxxxxxxx`).
-3. Chat **@userinfobot** → catat **User ID** kamu.
+1. Buka **BotFather** di Telegram.
+2. Kirim `/newbot`.
+3. Ikuti instruksi sampai bot dibuat.
+4. Simpan **Bot Token**.
+5. Gunakan bot informasi user untuk mengetahui **User ID** Telegram kamu.
+
+---
 
 ### Langkah 2 — Buat Bot Discord
 
-1. Discord Developer Portal (discord.com/developers/applications) → **New Application** → **Bot** → **Reset Token** → simpan.
-2. Aktifkan **Message Content Intent** & **Server Members Intent** di halaman Bot.
-3. Discord → Settings → Advanced → aktifkan **Developer Mode**.
-4. Klik kanan profil sendiri → **Copy User ID** → simpan.
-5. **OAuth2 → URL Generator** → scope `bot` + `applications.commands`, permission `Send Messages`, `Read Message History`, `Attach Files` → buka URL → pilih server → **Authorize**.
-6. Klik kanan channel yang mau dipakai → **Copy Channel ID** → simpan.
+1. Buka **Discord Developer Portal**.
+2. Buat **New Application**.
+3. Masuk ke bagian **Bot**.
+4. Buat/reset **Bot Token**.
+5. Aktifkan:
+   - Message Content Intent
+   - Server Members Intent
+6. Di Discord aktifkan **Developer Mode**.
+7. Copy **User ID** Discord kamu.
+8. Gunakan **OAuth2 → URL Generator**.
+9. Pilih:
+   - `bot`
+   - `applications.commands`
+10. Berikan permission yang diperlukan seperti:
+   - Send Messages
+   - Read Message History
+   - Attach Files
+11. Invite bot ke server.
+12. Copy **Channel ID** channel yang akan digunakan.
 
-### Langkah 3 — Ambil API Key Google Gemini
+---
 
-1. Buka **[Google AI Studio](https://aistudio.google.com/apikey)**, login pakai akun Google.
-2. Klik **Create API key** (pilih atau buat project Google Cloud kalau diminta).
-3. Copy API key-nya.
+### Langkah 3 — Buat API Key Groq
 
-> ℹ️ `gemini-3.6-flash` punya kuota gratis (free tier) di Google AI Studio.
-> Kalau kuota gratis habis / kena rate limit, kamu perlu upgrade ke billing
-> berbayar di Google Cloud Console kalau mau tetap pakai model ini terus-menerus.
+1. Buat akun Groq.
+2. Buka dashboard API key.
+3. Buat API key baru.
+4. Copy API key tersebut.
+
+Simpan API key dengan aman.
+
+**Jangan masukkan API key langsung ke Dockerfile.**
+
+---
 
 ### Langkah 4 — Upload Repo ke GitHub
 
-Buat repo baru → upload `Dockerfile`, `railway.toml`, `.gitignore`, `README.md`.
+Buat repository baru kemudian upload:
+
+```text
+Dockerfile
+railway.toml
+.gitignore
+README.md
+```
+
+Pastikan `GOOGLE_API_KEY` sudah tidak digunakan lagi.
+
+---
 
 ### Langkah 5 — Deploy ke Railway
 
-1. Railway → **New Project** → **Deploy from GitHub repo** → pilih repo.
-2. Tekan `Ctrl+K`/`⌘K` di canvas project → **Volume** → hubungkan ke service ini → Mount Path: `/opt/data`
-3. Tab **Variables** → **Raw Editor** → paste isi dari bagian Environment Variables di bawah → isi data asli kamu.
-4. Pastikan tab **Settings → Deploy → Custom Start Command KOSONG** (tidak diisi manual).
-5. Tab **Deployments** → titik tiga (⋮) → **Redeploy**.
-6. **View Logs**, tunggu sampai muncul:
-   ```
-   HERMES MODEL CONFIG
-   ```
-   diikuti status gateway Telegram/Discord connected.
+1. Buka Railway.
+2. Pilih **New Project**.
+3. Pilih **Deploy from GitHub repo**.
+4. Pilih repository Hermes Agent.
+5. Tambahkan **Volume** ke service.
+6. Gunakan Mount Path:
 
-### Langkah 6 — Testing
+```text
+/opt/data
+```
 
-Chat bot di Telegram, dan mention/chat bot di channel Discord yang diizinkan.
+7. Buka tab **Variables**.
+8. Masukkan environment variables dari bagian berikutnya.
+9. Buka:
+
+```text
+Settings → Deploy
+```
+
+10. Pastikan **Custom Start Command kosong**.
+11. Deploy/redeploy service.
+12. Buka **View Logs**.
+
+Jika berhasil, startup script akan menampilkan:
+
+```text
+========================================
+HERMES MODEL CONFIG
+========================================
+
+PRIMARY:
+  groq
+  openai/gpt-oss-120b
+
+FALLBACKS:
+  (tidak ada)
+
+========================================
+```
+
+Kemudian tunggu sampai gateway Telegram dan Discord terhubung.
 
 ---
 
 ## 🔑 Environment Variables
 
-Isi di Railway → Variables (tanpa tanda kutip di sekitar value):
+Masukkan di:
+
+```text
+Railway → Variables → Raw Editor
+```
+
+Gunakan:
 
 ```env
-# ===== WAJIB =====
-GOOGLE_API_KEY=ganti-punya-kamu
+# ===== GROQ =====
+GROQ_API_KEY=ganti-api-key-groq
 
+# ===== TELEGRAM =====
 TELEGRAM_BOT_TOKEN=ganti-token-botfather
 TELEGRAM_HOME_CHANNEL=ganti-user-id-kamu
 TELEGRAM_HOME_CHANNEL_NAME=Nama Bebas
 TELEGRAM_ALLOWED_USERS=ganti-user-id-kamu
 
+# ===== DISCORD =====
 DISCORD_BOT_TOKEN=ganti-token-discord
 DISCORD_ALLOWED_USERS=ganti-discord-user-id
 DISCORD_ALLOWED_CHANNELS=ganti-channel-id
 DISCORD_FREE_RESPONSE_CHANNELS=ganti-channel-id
 ```
 
-### Sudah otomatis (tidak perlu diisi, sudah di-hardcode di Dockerfile)
+### Tidak perlu diisi manual
 
-```
+Nilai berikut sudah diatur di Dockerfile:
+
+```text
 HERMES_HOME=/opt/data
 HERMES_TIMEZONE=Asia/Jakarta
 DISCORD_AUTO_THREAD=false
 DISCORD_TOOL_PROGRESS=off
 ```
 
-Mau ganti salah satu nilai di atas, atau ganti model default? Ada 2 cara:
-- **Permanen**: edit langsung di `Dockerfile` (baris `ENV ...` atau nama
-  model di bagian Python), commit, Railway auto-rebuild.
-- **Sementara/override**: isi variable dengan nama sama di Railway Variables
-  (untuk `ENV`) — itu menang.
+### ❌ Variable Gemini tidak digunakan lagi
+
+Hapus jika masih ada:
+
+```env
+GOOGLE_API_KEY=
+```
+
+Tidak perlu memasang Gemini sebagai fallback.
 
 ---
 
 ## 🧠 Provider & Model yang Dipakai
 
-| Urutan | Model | Model ID | Kenapa |
+| Urutan | Provider | Model | Model ID |
 |---|---|---|---|
-| Utama (satu-satunya) | Gemini 3.6 Flash | `gemini-3.6-flash` | Cepat, murah/gratis (free tier), tanpa fallback lain |
+| Utama | Groq | OpenAI GPT-OSS 120B | `openai/gpt-oss-120b` |
 
-> ⚠️ Katalog model Gemini bisa berubah sewaktu-waktu (misalnya model baru
-> menggantikan yang lama, atau nama preview jadi stabil). Kalau ada error
-> "model not found", cek daftar model terbaru lewat
-> `GET https://generativelanguage.googleapis.com/v1beta/models` (pakai
-> header `x-goog-api-key`), lalu update nama model di `Dockerfile`.
+Konfigurasi hanya menggunakan **satu provider dan satu model**.
+
+```text
+Provider:
+Groq
+
+Model:
+openai/gpt-oss-120b
+
+Fallback:
+Tidak ada
+```
+
+GPT-OSS 120B di Groq mendukung kemampuan seperti reasoning, tool use, code execution, dan JSON/structured output.
+
+### ⚠️ Tentang batas penggunaan
+
+Groq tetap memiliki **rate limit dan quota**, termasuk pada free plan. Jadi konfigurasi ini bukan berarti request tidak terbatas selamanya.
+
+Untuk `openai/gpt-oss-120b`, dokumentasi Groq saat ini mencantumkan free-plan limit **30 RPM, 1.000 RPD, 8K TPM, dan 200K TPD**. Batas dapat berubah sesuai kebijakan Groq.
+
+Jika melewati limit, API dapat mengembalikan:
+
+```text
+HTTP 429 Too Many Requests
+```
 
 ---
 
 ## 💬 Command di Chat
 
-Kirim langsung di Telegram/Discord (sesi terpisah per platform):
+Command dapat digunakan melalui Telegram atau Discord:
 
 | Command | Fungsi |
 |---|---|
-| /model | Lihat model yang aktif |
-| /model id --provider gemini | Ganti model utama secara manual |
-| /reasoning show / /reasoning hide | Tampilkan/sembunyikan proses berpikir model |
-| /sethome | Jadikan chat ini home channel |
-| /new / /reset | Mulai sesi baru |
-| /status | Info sesi saat ini |
-| /usage | Cek pemakaian token |
-| /help | Semua command tersedia |
+| `/model` | Melihat model yang aktif |
+| `/model <id> --provider <provider>` | Mengganti model secara manual |
+| `/reasoning show` | Menampilkan reasoning |
+| `/reasoning hide` | Menyembunyikan reasoning |
+| `/sethome` | Menjadikan chat sebagai home channel |
+| `/new` | Memulai sesi baru |
+| `/reset` | Mereset sesi |
+| `/status` | Melihat status sesi |
+| `/usage` | Melihat penggunaan token |
+| `/help` | Melihat command yang tersedia |
+
+### Model Groq
+
+Untuk konfigurasi custom provider Groq, format model adalah:
+
+```text
+/model custom:groq:openai/gpt-oss-120b
+```
+
+Konfigurasi provider custom dengan format `custom:<provider>:<model>` memang merupakan format yang digunakan Hermes untuk provider OpenAI-compatible seperti Groq.
 
 ---
 
@@ -187,51 +325,194 @@ Kirim langsung di Telegram/Discord (sesi terpisah per platform):
 
 | Masalah | Solusi |
 |---|---|
-| Container exit langsung | Cek Variables, tanpa tanda kutip, tidak ada yang typo |
-| "Permission denied" di /opt/data | Pastikan deploy dari GitHub repo (Dockerfile), BUKAN "Deploy a Docker Image" langsung, dan Custom Start Command di Settings dikosongkan |
-| Bot tidak balas (Telegram) | Cek TELEGRAM_ALLOWED_USERS/TELEGRAM_HOME_CHANNEL — baca log baris "Blocked unauthorized user" buat tahu ID yang benar |
-| Bot tidak balas (Discord) | Cek DISCORD_ALLOWED_CHANNELS, atau kirim /sethome di channel itu |
-| Error 401 / 403 | GOOGLE_API_KEY salah/belum diisi, atau API key belum diaktifkan untuk Generative Language API |
-| "Model not found" | Nama model Gemini berubah/di-deprecate — update nama model di Dockerfile |
-| Error 429 (kena limit) | Kuota gratis Gemini habis — tunggu reset kuota atau aktifkan billing di Google Cloud Console |
-| Reasoning mentah di chat | Kirim /reasoning hide |
-| Volume hilang setelah redeploy | Mount path harus persis /opt/data |
+| Container exit langsung | Periksa Railway Variables dan pastikan tidak ada typo |
+| `Permission denied` di `/opt/data` | Pastikan menggunakan GitHub repo + Dockerfile dan Mount Path `/opt/data` |
+| Bot Telegram tidak membalas | Periksa `TELEGRAM_ALLOWED_USERS` dan `TELEGRAM_HOME_CHANNEL` |
+| Bot Discord tidak membalas | Periksa `DISCORD_ALLOWED_CHANNELS` dan `DISCORD_ALLOWED_USERS` |
+| Error `401` | Periksa `GROQ_API_KEY` |
+| Error `403` | Periksa API key dan akses endpoint Groq |
+| Error `429` | Rate limit/quota Groq sedang tercapai; tunggu reset atau gunakan plan dengan limit lebih tinggi |
+| `Model not found` | Periksa kembali model ID Groq yang tersedia |
+| Reasoning muncul di chat | Gunakan `/reasoning hide` |
+| Volume tidak menyimpan data | Pastikan Mount Path adalah `/opt/data` |
+| Gemini masih muncul di log | Hapus konfigurasi/API key Gemini dan redeploy image terbaru |
 
 ---
 
 ## 🔒 Keamanan
 
-- **Jangan** commit `.env` asli ke GitHub — sudah dicegah lewat `.gitignore`.
-- **Jangan** share token/API key di chat, forum, atau screenshot publik.
-  Kalau sampai bocor, langsung **revoke/hapus** API key itu di
-  [Google AI Studio](https://aistudio.google.com/apikey) dan ganti baru.
-- Set TELEGRAM_ALLOWED_USERS & DISCORD_ALLOWED_USERS supaya bot cuma
-  bisa dipakai orang tertentu.
+**Jangan pernah commit API key atau bot token ke GitHub.**
+
+Jangan memasukkan:
+
+```text
+GROQ_API_KEY
+TELEGRAM_BOT_TOKEN
+DISCORD_BOT_TOKEN
+```
+
+langsung ke `Dockerfile`.
+
+Gunakan:
+
+```text
+Railway → Variables
+```
+
+Jika API key atau bot token terlanjur bocor:
+
+1. Revoke/delete credential lama.
+2. Buat credential baru.
+3. Ganti value di Railway Variables.
+4. Redeploy service.
+
+Repository **Private** juga lebih disarankan untuk konfigurasi bot pribadi.
 
 ---
 
 ## ❓ FAQ
 
-**Q: Kenapa nama model di-hardcode di Dockerfile, bukan di Railway Variables?**
-A: Nama model bukan data rahasia, jadi aman ditaruh di repo. Ini mengurangi
-jumlah variable yang perlu diisi manual dan memperkecil kemungkinan salah
-ketik. API key (yang rahasia) tetap di Railway Variables.
+### Q: Kenapa memakai Groq?
 
-**Q: Apakah bisa ganti ke model Gemini lain (misalnya Gemini Pro)?**
-A: Bisa, tinggal ganti nilai `"default"` di bagian `cfg["model"]` pada
-Dockerfile dengan model ID lain dari katalog Gemini (misalnya
-`gemini-3-pro` atau versi lain) — providernya tetap satu (`gemini`), cuma
-ganti nama model. Kamu juga bisa isi ulang list `fallbacks` di Dockerfile
-kalau mau tambah model cadangan.
+Groq menyediakan endpoint OpenAI-compatible yang dapat digunakan Hermes melalui custom provider. Hermes sendiri mendokumentasikan konfigurasi Groq menggunakan `api: https://api.groq.com/openai/v1`, `GROQ_API_KEY`, dan `provider: custom:groq`.
 
-**Q: Apakah ini Hermes Agent asli?**
-A: Ya, `nousresearch/hermes-agent` resmi dari Nous Research, bukan fork.
+---
+
+### Q: Apakah Hermes Agent ini versi resmi?
+
+Ya.
+
+Image yang digunakan:
+
+```text
+nousresearch/hermes-agent:latest
+```
+
+Repository ini hanya menyediakan konfigurasi deployment. Hermes Agent tetap berasal dari Nous Research.
+
+---
+
+### Q: Apakah ada fallback Gemini?
+
+Tidak.
+
+Konfigurasi ini sengaja hanya menggunakan:
+
+```text
+Groq
+└── openai/gpt-oss-120b
+```
+
+Tidak ada:
+
+```text
+Gemini
+OpenRouter
+Claude
+DeepSeek
+OpenCode Zen
+```
+
+sebagai fallback.
+
+---
+
+### Q: Apakah bisa mengganti model Groq?
+
+Bisa.
+
+Contohnya jika ingin mengganti model, ubah:
+
+```python
+cfg["model"] = {
+    "default": "openai/gpt-oss-120b",
+    "provider": "custom:groq"
+}
+```
+
+Namun pastikan model tersebut tersedia di Groq.
+
+Katalog model Groq dapat berubah, sehingga model ID sebaiknya selalu disesuaikan dengan daftar model Groq terbaru.
+
+---
+
+### Q: Apakah GPT-OSS 120B cocok untuk coding?
+
+Model ini memang ditujukan untuk penggunaan agentic dan memiliki kemampuan reasoning serta software engineering/coding.
+
+---
+
+### Q: Apakah Groq benar-benar tanpa limit?
+
+Tidak.
+
+Free plan tetap memiliki batas request dan token. Untuk `openai/gpt-oss-120b`, batas free plan saat dokumentasi ini diperiksa adalah:
+
+```text
+30 requests/minute
+1.000 requests/day
+8.000 tokens/minute
+200.000 tokens/day
+```
+
+Batas tersebut dapat berubah dari waktu ke waktu.
+
+---
+
+### Q: Kenapa model dan provider di-hardcode di Dockerfile?
+
+Karena provider dan model bukan data rahasia.
+
+Dengan meng-hardcode:
+
+```text
+Provider → Groq
+Model    → openai/gpt-oss-120b
+```
+
+jumlah variable yang harus diisi di Railway menjadi lebih sedikit.
+
+Credential rahasia tetap disimpan di Railway:
+
+```text
+GROQ_API_KEY
+TELEGRAM_BOT_TOKEN
+DISCORD_BOT_TOKEN
+```
 
 ---
 
 ## 📚 Referensi
 
-- Hermes Agent: `nousresearch/hermes-agent` di Docker Hub
-- Google Gemini API: ai.google.dev/gemini-api
-- Google AI Studio (buat API key): aistudio.google.com/apikey
-- Railway: railway.app
+- Hermes Agent — dokumentasi provider
+- Groq — dokumentasi model
+- Groq — dokumentasi rate limits
+- OpenAI GPT-OSS 120B — halaman model di Groq
+- Railway — dokumentasi deployment
+
+---
+
+## ✅ Konfigurasi Akhir
+
+```text
+Hermes Agent
+│
+├── Telegram
+│
+├── Discord
+│
+├── Provider
+│   └── Groq
+│
+├── Model
+│   └── openai/gpt-oss-120b
+│
+├── Fallback
+│   └── Tidak ada
+│
+├── Home
+│   └── /opt/data
+│
+└── Timezone
+    └── Asia/Jakarta
+```
