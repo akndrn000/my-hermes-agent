@@ -27,30 +27,49 @@ except FileNotFoundError:
 if not isinstance(cfg, dict):
     cfg = {}
 
-# PRIMARY MODEL - Groq
+# ============================================================
+# PRIMARY MODEL - GROQ GPT-OSS 120B
+# ============================================================
+
 cfg["model"] = {
-    "provider": "groq",
-    "default": "openai/gpt-oss-120b"
+    "default": "openai/gpt-oss-120b",
+    "provider": "custom:groq"
 }
 
-# CUSTOM PROVIDER - Groq
-providers = {}
+# ============================================================
+# REASONING
+# ============================================================
 
-if os.environ.get("GROQ_API_KEY"):
-    providers["groq"] = {
+cfg.setdefault("agent", {})
+cfg["agent"]["reasoning_effort"] = "medium"
+
+# ============================================================
+# CUSTOM PROVIDER - GROQ
+# ============================================================
+
+cfg["providers"] = {
+    "groq": {
         "api": "https://api.groq.com/openai/v1",
-        "key_env": "GROQ_API_KEY",
-        "transport": "chat_completions"
+        "key_env": "GROQ_API_KEY"
     }
+}
 
-if providers:
-    cfg["providers"] = providers
-else:
-    cfg.pop("providers", None)
+# ============================================================
+# API MODE
+# ============================================================
 
-# Tidak menggunakan fallback
+cfg["providers"]["groq"]["api_mode"] = "chat_completions"
+
+# ============================================================
+# NO FALLBACK
+# ============================================================
+
 cfg.pop("fallback_model", None)
 cfg["fallback_providers"] = []
+
+# ============================================================
+# SAVE CONFIG
+# ============================================================
 
 with open(path, "w") as f:
     yaml.safe_dump(
@@ -66,8 +85,15 @@ print("HERMES MODEL CONFIG")
 print("========================================")
 print("")
 print("PRIMARY:")
-print("  Provider : groq")
+print("  Provider : custom:groq")
 print("  Model    : openai/gpt-oss-120b")
+print("")
+print("REASONING:")
+print("  Effort   : medium")
+print("")
+print("API:")
+print("  Endpoint : https://api.groq.com/openai/v1")
+print("  Mode     : chat_completions")
 print("")
 print("FALLBACKS:")
 print("  (tidak ada)")
