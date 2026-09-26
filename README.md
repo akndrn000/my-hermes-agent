@@ -1,9 +1,8 @@
-# 🤖 Hermes Agent — Telegram & Discord Bot (Railway, OpenCode Zen)
+# 🤖 Hermes Agent — Telegram & Discord Bot (Railway, Google Gemini)
 
 Bot AI pribadi berbasis **Hermes Agent** (open-source resmi dari Nous Research),
 di-deploy di **Railway**, terhubung ke **Telegram** dan **Discord** sekaligus,
-pakai **OpenCode Zen** sebagai satu-satunya provider model (dengan beberapa
-model gratis di dalamnya sebagai fallback otomatis).
+pakai **Google Gemini** (`gemini-3.8-flash`) sebagai satu-satunya provider model.
 
 ---
 
@@ -25,26 +24,23 @@ model gratis di dalamnya sebagai fallback otomatis).
 
 Repo ini berisi konfigurasi siap pakai untuk men-deploy **Hermes Agent resmi**
 (`nousresearch/hermes-agent`, bukan fork/modifikasi) ke Railway sebagai bot
-Telegram + Discord, dengan **OpenCode Zen** sebagai provider model tunggal.
+Telegram + Discord, dengan **Google Gemini** sebagai provider model tunggal.
 
 Semua nama model & pengaturan teknis (provider, model, timezone, dll) sudah
 **di-hardcode di dalam `Dockerfile`** — jadi kamu cuma perlu isi **API key
-OpenCode Zen dan data pribadi kamu** (token bot, ID user) di Railway.
+Gemini dan data pribadi kamu** (token bot, ID user) di Railway.
 
-### Alur fallback
+### Alur model
 
 ```
 Chat masuk
    ↓
-OpenCode Zen — DeepSeek V4 Flash (Free)   ← provider utama
-   ↓ kena limit / error?
-OpenCode Zen — MiMo-V2.5 (Free)
-   ↓ kena limit / error?
-OpenCode Zen — Nemotron 3 Ultra (Free)
+Google Gemini — gemini-3.8-flash   ← satu-satunya model, tanpa fallback
 ```
 
-Semua model di atas jalan lewat **satu endpoint dan satu API key** OpenCode
-Zen (`https://opencode.ai/zen/v1`), jadi nggak perlu daftar ke provider lain.
+Model di atas jalan lewat endpoint kompatibel-OpenAI milik Google
+(`https://generativelanguage.googleapis.com/v1beta/openai`), pakai **satu
+API key Gemini**, jadi nggak perlu daftar ke provider lain.
 
 ---
 
@@ -87,12 +83,15 @@ disarankan).
 5. **OAuth2 → URL Generator** → scope `bot` + `applications.commands`, permission `Send Messages`, `Read Message History`, `Attach Files` → buka URL → pilih server → **Authorize**.
 6. Klik kanan channel yang mau dipakai → **Copy Channel ID** → simpan.
 
-### Langkah 3 — Ambil API Key OpenCode Zen
+### Langkah 3 — Ambil API Key Google Gemini
 
-1. Buka **opencode.ai/zen**, login/daftar.
-2. Tambahkan detail billing (wajib walau mau pakai model gratis — hanya
-   dikenakan biaya kalau pilih model berbayar).
-3. Copy API key-nya (format `sk-...`).
+1. Buka **[Google AI Studio](https://aistudio.google.com/apikey)**, login pakai akun Google.
+2. Klik **Create API key** (pilih atau buat project Google Cloud kalau diminta).
+3. Copy API key-nya.
+
+> ℹ️ `gemini-3.8-flash` punya kuota gratis (free tier) di Google AI Studio.
+> Kalau kuota gratis habis / kena rate limit, kamu perlu upgrade ke billing
+> berbayar di Google Cloud Console kalau mau tetap pakai model ini terus-menerus.
 
 ### Langkah 4 — Upload Repo ke GitHub
 
@@ -123,7 +122,7 @@ Isi di Railway → Variables (tanpa tanda kutip di sekitar value):
 
 ```env
 # ===== WAJIB =====
-OPENCODE_API_KEY=sk-ganti-punya-kamu
+GEMINI_API_KEY=ganti-punya-kamu
 
 TELEGRAM_BOT_TOKEN=ganti-token-botfather
 TELEGRAM_HOME_CHANNEL=ganti-user-id-kamu
@@ -157,14 +156,13 @@ Mau ganti salah satu nilai di atas, atau ganti model default? Ada 2 cara:
 
 | Urutan | Model | Model ID | Kenapa |
 |---|---|---|---|
-| Utama | DeepSeek V4 Flash Free | `deepseek-v4-flash-free` | Paling stabil di antara model gratis OpenCode Zen |
-| Fallback 1 | MiMo-V2.5 Free | `mimo-v2.5-free` | Alternatif kalau DeepSeek kena limit |
-| Fallback 2 | Nemotron 3 Ultra Free | `nemotron-3-ultra-free` | Model reasoning besar, cadangan terakhir |
+| Utama (satu-satunya) | Gemini 3.8 Flash | `gemini-3.8-flash` | Cepat, murah/gratis (free tier), tanpa fallback lain |
 
-> ⚠️ Katalog model gratis OpenCode Zen bisa berubah sewaktu-waktu. Kalau ada
-> yang error "model not found", cek daftar terbaru di `opencode.ai/zen`
-> (atau `GET https://opencode.ai/zen/v1/models`), lalu update nama model di
-> `Dockerfile`.
+> ⚠️ Katalog model Gemini bisa berubah sewaktu-waktu (misalnya model baru
+> menggantikan yang lama, atau nama preview jadi stabil). Kalau ada error
+> "model not found", cek daftar model terbaru lewat
+> `GET https://generativelanguage.googleapis.com/v1beta/models` (pakai
+> header `x-goog-api-key`), lalu update nama model di `Dockerfile`.
 
 ---
 
@@ -175,7 +173,7 @@ Kirim langsung di Telegram/Discord (sesi terpisah per platform):
 | Command | Fungsi |
 |---|---|
 | /model | Lihat model yang aktif |
-| /model id --provider opencode | Ganti model utama secara manual |
+| /model id --provider gemini | Ganti model utama secara manual |
 | /reasoning show / /reasoning hide | Tampilkan/sembunyikan proses berpikir model |
 | /sethome | Jadikan chat ini home channel |
 | /new / /reset | Mulai sesi baru |
@@ -193,8 +191,9 @@ Kirim langsung di Telegram/Discord (sesi terpisah per platform):
 | "Permission denied" di /opt/data | Pastikan deploy dari GitHub repo (Dockerfile), BUKAN "Deploy a Docker Image" langsung, dan Custom Start Command di Settings dikosongkan |
 | Bot tidak balas (Telegram) | Cek TELEGRAM_ALLOWED_USERS/TELEGRAM_HOME_CHANNEL — baca log baris "Blocked unauthorized user" buat tahu ID yang benar |
 | Bot tidak balas (Discord) | Cek DISCORD_ALLOWED_CHANNELS, atau kirim /sethome di channel itu |
-| Error 401 | OPENCODE_API_KEY salah/belum diisi |
-| "Model not found" | Model di-delist OpenCode Zen — update nama model di Dockerfile |
+| Error 401 / 403 | GEMINI_API_KEY salah/belum diisi, atau API key belum diaktifkan untuk Generative Language API |
+| "Model not found" | Nama model Gemini berubah/di-deprecate — update nama model di Dockerfile |
+| Error 429 (kena limit) | Kuota gratis Gemini habis — tunggu reset kuota atau aktifkan billing di Google Cloud Console |
 | Reasoning mentah di chat | Kirim /reasoning hide |
 | Volume hilang setelah redeploy | Mount path harus persis /opt/data |
 
@@ -204,8 +203,8 @@ Kirim langsung di Telegram/Discord (sesi terpisah per platform):
 
 - **Jangan** commit `.env` asli ke GitHub — sudah dicegah lewat `.gitignore`.
 - **Jangan** share token/API key di chat, forum, atau screenshot publik.
-  Kalau sampai bocor, langsung **revoke** token itu di dashboard
-  opencode.ai/zen dan ganti baru.
+  Kalau sampai bocor, langsung **revoke/hapus** API key itu di
+  [Google AI Studio](https://aistudio.google.com/apikey) dan ganti baru.
 - Set TELEGRAM_ALLOWED_USERS & DISCORD_ALLOWED_USERS supaya bot cuma
   bisa dipakai orang tertentu.
 
@@ -218,10 +217,12 @@ A: Nama model bukan data rahasia, jadi aman ditaruh di repo. Ini mengurangi
 jumlah variable yang perlu diisi manual dan memperkecil kemungkinan salah
 ketik. API key (yang rahasia) tetap di Railway Variables.
 
-**Q: Apakah bisa nambah model berbayar OpenCode Zen selain yang gratis?**
-A: Bisa, tinggal ganti/tambah `model` di daftar `fallbacks` pada Dockerfile
-dengan model ID lain dari katalog OpenCode Zen — providernya tetap satu
-(`opencode`), cuma ganti nama model.
+**Q: Apakah bisa ganti ke model Gemini lain (misalnya Gemini Pro)?**
+A: Bisa, tinggal ganti nilai `"default"` di bagian `cfg["model"]` pada
+Dockerfile dengan model ID lain dari katalog Gemini (misalnya
+`gemini-3-pro` atau versi lain) — providernya tetap satu (`gemini`), cuma
+ganti nama model. Kamu juga bisa isi ulang list `fallbacks` di Dockerfile
+kalau mau tambah model cadangan.
 
 **Q: Apakah ini Hermes Agent asli?**
 A: Ya, `nousresearch/hermes-agent` resmi dari Nous Research, bukan fork.
@@ -231,5 +232,6 @@ A: Ya, `nousresearch/hermes-agent` resmi dari Nous Research, bukan fork.
 ## 📚 Referensi
 
 - Hermes Agent: `nousresearch/hermes-agent` di Docker Hub
-- OpenCode Zen: opencode.ai/zen
+- Google Gemini API: ai.google.dev/gemini-api
+- Google AI Studio (buat API key): aistudio.google.com/apikey
 - Railway: railway.app
