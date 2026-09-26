@@ -27,28 +27,19 @@ except FileNotFoundError:
 if not isinstance(cfg, dict):
     cfg = {}
 
-# ============================================================
-# PRIMARY MODEL - Google Gemini (satu-satunya provider)
-# ============================================================
-
+# PRIMARY MODEL - Groq
 cfg["model"] = {
-    "provider": "gemini",
-    "default": "gemini-3.6-flash"
+    "provider": "groq",
+    "default": "openai/gpt-oss-120b"
 }
 
-cfg.pop("fallback_model", None)
-
-# ============================================================
-# CUSTOM PROVIDER - Google Gemini
-# (endpoint kompatibel format OpenAI chat/completions)
-# ============================================================
-
+# CUSTOM PROVIDER - Groq
 providers = {}
 
-if os.environ.get("GOOGLE_API_KEY"):
-    providers["gemini"] = {
-        "api": "https://generativelanguage.googleapis.com/v1beta/openai",
-        "key_env": "GOOGLE_API_KEY",
+if os.environ.get("GROQ_API_KEY"):
+    providers["groq"] = {
+        "api": "https://api.groq.com/openai/v1",
+        "key_env": "GROQ_API_KEY",
         "transport": "chat_completions"
     }
 
@@ -57,16 +48,17 @@ if providers:
 else:
     cfg.pop("providers", None)
 
-# ============================================================
-# FALLBACK CHAIN - tidak ada, hanya satu model (Gemini 3.6 Flash)
-# ============================================================
-
-fallbacks = []
-
-cfg["fallback_providers"] = fallbacks
+# Tidak menggunakan fallback
+cfg.pop("fallback_model", None)
+cfg["fallback_providers"] = []
 
 with open(path, "w") as f:
-    yaml.safe_dump(cfg, f, sort_keys=False, default_flow_style=False)
+    yaml.safe_dump(
+        cfg,
+        f,
+        sort_keys=False,
+        default_flow_style=False
+    )
 
 print("")
 print("========================================")
@@ -74,17 +66,11 @@ print("HERMES MODEL CONFIG")
 print("========================================")
 print("")
 print("PRIMARY:")
-print("  gemini")
-print("  gemini-3.6-flash")
+print("  Provider : groq")
+print("  Model    : openai/gpt-oss-120b")
 print("")
 print("FALLBACKS:")
-
-if fallbacks:
-    for i, item in enumerate(fallbacks, 1):
-        print(f"  {i}. {item['provider']} -> {item['model']}")
-else:
-    print("  (tidak ada)")
-
+print("  (tidak ada)")
 print("")
 print("========================================")
 
