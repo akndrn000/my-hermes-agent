@@ -33,7 +33,7 @@ if not isinstance(cfg, dict):
 
 cfg["model"] = {
     "provider": "gemini",
-    "default": "gemini-3.8-flash"
+    "default": "gemini-3.6-flash"
 }
 
 cfg.pop("fallback_model", None)
@@ -45,10 +45,10 @@ cfg.pop("fallback_model", None)
 
 providers = {}
 
-if os.environ.get("GEMINI_API_KEY"):
+if os.environ.get("GOOGLE_API_KEY"):
     providers["gemini"] = {
         "api": "https://generativelanguage.googleapis.com/v1beta/openai",
-        "key_env": "GEMINI_API_KEY",
+        "key_env": "GOOGLE_API_KEY",
         "transport": "chat_completions"
     }
 
@@ -58,7 +58,7 @@ else:
     cfg.pop("providers", None)
 
 # ============================================================
-# FALLBACK CHAIN - tidak ada, hanya satu model (Gemini 3.5 Flash)
+# FALLBACK CHAIN - tidak ada, hanya satu model (Gemini 3.6 Flash)
 # ============================================================
 
 fallbacks = []
@@ -75,7 +75,7 @@ print("========================================")
 print("")
 print("PRIMARY:")
 print("  gemini")
-print("  gemini-3.8-flash")
+print("  gemini-3.6-flash")
 print("")
 print("FALLBACKS:")
 
