@@ -1,8 +1,8 @@
-# 🤖 Hermes Agent — Telegram & Discord Bot (Railway, Groq)
+# 🤖 Hermes Agent — Telegram & Discord Bot (Railway, Atria)
 
 Bot AI pribadi berbasis **Hermes Agent** (open-source resmi dari Nous Research),  
 di-deploy di **Railway**, terhubung ke **Telegram** dan **Discord** sekaligus,  
-menggunakan **Groq** dengan model **OpenAI GPT-OSS 120B** sebagai satu-satunya provider model.
+menggunakan **Atria** dengan model **Atria Dawn Preview** sebagai satu-satunya provider model.
 
 ---
 
@@ -24,14 +24,14 @@ menggunakan **Groq** dengan model **OpenAI GPT-OSS 120B** sebagai satu-satunya p
 
 Repo ini berisi konfigurasi siap pakai untuk men-deploy **Hermes Agent resmi**
 (`nousresearch/hermes-agent`, bukan fork/modifikasi) ke Railway sebagai bot
-Telegram + Discord, dengan **Groq** sebagai provider model tunggal.
+Telegram + Discord, dengan **Atria** sebagai provider model tunggal.
 
 Model utama yang digunakan:
 
 ```text
-OpenAI GPT-OSS 120B
-Model ID: openai/gpt-oss-120b
-Provider: Groq
+Atria Dawn Preview
+Model ID: Atria-Dawn-Preview
+Provider: Atria
 ```
 
 Semua konfigurasi teknis utama seperti provider, model, timezone, dan pengaturan
@@ -44,33 +44,37 @@ API key dan data pribadi tetap dimasukkan melalui Railway Variables.
 ```text
 Chat masuk
     ↓
-Groq
+Atria
     ↓
-OpenAI GPT-OSS 120B
+Atria Dawn Preview
     ↓
 Jawaban Hermes Agent
 ```
 
-Hermes menggunakan endpoint OpenAI-compatible milik Groq:
+Hermes menggunakan endpoint OpenAI-compatible milik Atria:
 
 ```text
-https://api.groq.com/openai/v1
+https://api.atria-asi.ai/v1
 ```
 
 Konfigurasi Hermes menggunakan custom provider:
 
 ```yaml
 providers:
-  groq:
-    api: https://api.groq.com/openai/v1
-    key_env: GROQ_API_KEY
+  atria:
+    api: https://api.atria-asi.ai/v1
+    key_env: ATRIA_API_KEY
 
 model:
-  default: openai/gpt-oss-120b
-  provider: custom:groq
+  default: Atria-Dawn-Preview
+  provider: custom:atria
 ```
 
 Tidak ada fallback provider dalam konfigurasi ini.
+
+> ⚠️ Atria Dawn Preview menerima **input teks saja** (tidak menerima gambar).
+> Jika kamu mengirim foto/attachment ke bot, permintaan tersebut kemungkinan
+> akan ditolak oleh endpoint dengan error 400.
 
 ---
 
@@ -133,12 +137,13 @@ Upload 4 file tersebut ke root repository GitHub.
 
 ---
 
-### Langkah 3 — Buat API Key Groq
+### Langkah 3 — Buat API Key Atria
 
-1. Buat akun Groq.
-2. Buka dashboard API key.
-3. Buat API key baru.
-4. Copy API key tersebut.
+1. Buka `https://api.atria-asi.ai/console`.
+2. Buat akun / login.
+3. Buka bagian API key.
+4. Buat API key baru (biasanya berformat `atr_...` dan hanya ditampilkan sekali).
+5. Copy API key tersebut.
 
 Simpan API key dengan aman.
 
@@ -157,7 +162,7 @@ railway.toml
 README.md
 ```
 
-Pastikan `GOOGLE_API_KEY` sudah tidak digunakan lagi.
+Pastikan `GROQ_API_KEY` dan `GOOGLE_API_KEY` sudah tidak digunakan lagi.
 
 ---
 
@@ -194,8 +199,8 @@ HERMES MODEL CONFIG
 ========================================
 
 PRIMARY:
-  groq
-  openai/gpt-oss-120b
+  atria
+  Atria-Dawn-Preview
 
 FALLBACKS:
   (tidak ada)
@@ -218,8 +223,8 @@ Railway → Variables → Raw Editor
 Gunakan:
 
 ```env
-# ===== GROQ =====
-GROQ_API_KEY=ganti-api-key-groq
+# ===== ATRIA =====
+ATRIA_API_KEY=ganti-api-key-atria
 
 # ===== TELEGRAM =====
 TELEGRAM_BOT_TOKEN=ganti-token-botfather
@@ -245,15 +250,16 @@ DISCORD_AUTO_THREAD=false
 DISCORD_TOOL_PROGRESS=off
 ```
 
-### ❌ Variable Gemini tidak digunakan lagi
+### ❌ Variable Groq dan Gemini tidak digunakan lagi
 
 Hapus jika masih ada:
 
 ```env
+GROQ_API_KEY=
 GOOGLE_API_KEY=
 ```
 
-Tidak perlu memasang Gemini sebagai fallback.
+Tidak perlu memasang Groq atau Gemini sebagai fallback.
 
 ---
 
@@ -261,28 +267,30 @@ Tidak perlu memasang Gemini sebagai fallback.
 
 | Urutan | Provider | Model | Model ID |
 |---|---|---|---|
-| Utama | Groq | OpenAI GPT-OSS 120B | `openai/gpt-oss-120b` |
+| Utama | Atria | Atria Dawn Preview | `Atria-Dawn-Preview` |
 
 Konfigurasi hanya menggunakan **satu provider dan satu model**.
 
 ```text
 Provider:
-Groq
+Atria
 
 Model:
-openai/gpt-oss-120b
+Atria-Dawn-Preview
 
 Fallback:
 Tidak ada
 ```
 
-GPT-OSS 120B di Groq mendukung kemampuan seperti reasoning, tool use, code execution, dan JSON/structured output.
+Atria Dawn Preview adalah model agentic (MoE, ~744B parameter) yang ditujukan untuk
+pemahaman lingkungan berkelanjutan, penggunaan tool, dan penyelesaian tugas multi-langkah
+(riset, coding, pembuatan dokumen/laporan, hingga analisis keamanan).
 
 ### ⚠️ Tentang batas penggunaan
 
-Groq tetap memiliki **rate limit dan quota**, termasuk pada free plan. Jadi konfigurasi ini bukan berarti request tidak terbatas selamanya.
-
-Untuk `openai/gpt-oss-120b`, dokumentasi Groq saat ini mencantumkan free-plan limit **30 RPM, 1.000 RPD, 8K TPM, dan 200K TPD**. Batas dapat berubah sesuai kebijakan Groq.
+Atria kemungkinan tetap memiliki rate limit/quota tersendiri sesuai kebijakan penyedianya,
+meskipun saat ini beberapa akses ke model ini tercatat gratis. Selalu cek dashboard/console
+Atria untuk detail limit terbaru, karena kebijakan ini dapat berubah sewaktu-waktu.
 
 Jika melewati limit, API dapat mengembalikan:
 
@@ -309,15 +317,16 @@ Command dapat digunakan melalui Telegram atau Discord:
 | `/usage` | Melihat penggunaan token |
 | `/help` | Melihat command yang tersedia |
 
-### Model Groq
+### Model Atria
 
-Untuk konfigurasi custom provider Groq, format model adalah:
+Untuk konfigurasi custom provider Atria, format model adalah:
 
 ```text
-/model custom:groq:openai/gpt-oss-120b
+/model custom:atria:Atria-Dawn-Preview
 ```
 
-Konfigurasi provider custom dengan format `custom:<provider>:<model>` memang merupakan format yang digunakan Hermes untuk provider OpenAI-compatible seperti Groq.
+Konfigurasi provider custom dengan format `custom:<provider>:<model>` memang merupakan
+format yang digunakan Hermes untuk provider OpenAI-compatible seperti Atria.
 
 ---
 
@@ -329,13 +338,14 @@ Konfigurasi provider custom dengan format `custom:<provider>:<model>` memang mer
 | `Permission denied` di `/opt/data` | Pastikan menggunakan GitHub repo + Dockerfile dan Mount Path `/opt/data` |
 | Bot Telegram tidak membalas | Periksa `TELEGRAM_ALLOWED_USERS` dan `TELEGRAM_HOME_CHANNEL` |
 | Bot Discord tidak membalas | Periksa `DISCORD_ALLOWED_CHANNELS` dan `DISCORD_ALLOWED_USERS` |
-| Error `401` | Periksa `GROQ_API_KEY` |
-| Error `403` | Periksa API key dan akses endpoint Groq |
-| Error `429` | Rate limit/quota Groq sedang tercapai; tunggu reset atau gunakan plan dengan limit lebih tinggi |
-| `Model not found` | Periksa kembali model ID Groq yang tersedia |
+| Error `401` | Periksa `ATRIA_API_KEY` |
+| Error `403` | Periksa API key dan akses endpoint Atria |
+| Error `429` | Rate limit/quota Atria sedang tercapai; tunggu reset atau cek plan di console |
+| Error `400` saat kirim gambar | Atria Dawn Preview tidak menerima input gambar, kirim teks saja |
+| `Model not found` | Periksa kembali model ID Atria yang tersedia di console |
 | Reasoning muncul di chat | Gunakan `/reasoning hide` |
 | Volume tidak menyimpan data | Pastikan Mount Path adalah `/opt/data` |
-| Gemini masih muncul di log | Hapus konfigurasi/API key Gemini dan redeploy image terbaru |
+| Groq/Gemini masih muncul di log | Hapus konfigurasi/API key lama dan redeploy image terbaru |
 
 ---
 
@@ -346,7 +356,7 @@ Konfigurasi provider custom dengan format `custom:<provider>:<model>` memang mer
 Jangan memasukkan:
 
 ```text
-GROQ_API_KEY
+ATRIA_API_KEY
 TELEGRAM_BOT_TOKEN
 DISCORD_BOT_TOKEN
 ```
@@ -372,9 +382,11 @@ Repository **Private** juga lebih disarankan untuk konfigurasi bot pribadi.
 
 ## ❓ FAQ
 
-### Q: Kenapa memakai Groq?
+### Q: Kenapa memakai Atria?
 
-Groq menyediakan endpoint OpenAI-compatible yang dapat digunakan Hermes melalui custom provider. Hermes sendiri mendokumentasikan konfigurasi Groq menggunakan `api: https://api.groq.com/openai/v1`, `GROQ_API_KEY`, dan `provider: custom:groq`.
+Atria menyediakan endpoint OpenAI-compatible (Chat Completions API) yang dapat digunakan
+Hermes melalui custom provider, dengan `api: https://api.atria-asi.ai/v1`,
+`ATRIA_API_KEY`, dan `provider: custom:atria`.
 
 ---
 
@@ -392,20 +404,21 @@ Repository ini hanya menyediakan konfigurasi deployment. Hermes Agent tetap bera
 
 ---
 
-### Q: Apakah ada fallback Gemini?
+### Q: Apakah ada fallback provider lain?
 
 Tidak.
 
 Konfigurasi ini sengaja hanya menggunakan:
 
 ```text
-Groq
-└── openai/gpt-oss-120b
+Atria
+└── Atria-Dawn-Preview
 ```
 
 Tidak ada:
 
 ```text
+Groq
 Gemini
 OpenRouter
 Claude
@@ -417,45 +430,42 @@ sebagai fallback.
 
 ---
 
-### Q: Apakah bisa mengganti model Groq?
+### Q: Apakah bisa mengganti model Atria?
 
-Bisa.
+Bisa, jika Atria menambah model lain di katalognya.
 
 Contohnya jika ingin mengganti model, ubah:
 
 ```python
 cfg["model"] = {
-    "default": "openai/gpt-oss-120b",
-    "provider": "custom:groq"
+    "default": "Atria-Dawn-Preview",
+    "provider": "custom:atria"
 }
 ```
 
-Namun pastikan model tersebut tersedia di Groq.
-
-Katalog model Groq dapat berubah, sehingga model ID sebaiknya selalu disesuaikan dengan daftar model Groq terbaru.
+Namun pastikan model tersebut tersedia di katalog Atria (cek di console).
 
 ---
 
-### Q: Apakah GPT-OSS 120B cocok untuk coding?
+### Q: Apakah Atria Dawn Preview cocok untuk coding?
 
-Model ini memang ditujukan untuk penggunaan agentic dan memiliki kemampuan reasoning serta software engineering/coding.
+Ya. Model ini dirancang untuk tugas agentic dengan kemampuan reasoning, penggunaan tool,
+implementasi kode, eksekusi eksperimen, hingga analisis dan perbaikan hasil — termasuk
+skenario software engineering.
 
 ---
 
-### Q: Apakah Groq benar-benar tanpa limit?
+### Q: Apakah Atria Dawn Preview menerima gambar?
 
-Tidak.
+Tidak. Model ini hanya menerima input teks. Jika bot menerima attachment gambar dari
+Telegram/Discord dan meneruskannya ke model, permintaan akan gagal dengan error 400.
 
-Free plan tetap memiliki batas request dan token. Untuk `openai/gpt-oss-120b`, batas free plan saat dokumentasi ini diperiksa adalah:
+---
 
-```text
-30 requests/minute
-1.000 requests/day
-8.000 tokens/minute
-200.000 tokens/day
-```
+### Q: Apakah Atria benar-benar tanpa limit?
 
-Batas tersebut dapat berubah dari waktu ke waktu.
+Belum tentu. Kebijakan rate limit/quota Atria dapat berubah sewaktu-waktu — selalu cek
+console resmi (`https://api.atria-asi.ai/console`) untuk informasi limit terbaru.
 
 ---
 
@@ -466,8 +476,8 @@ Karena provider dan model bukan data rahasia.
 Dengan meng-hardcode:
 
 ```text
-Provider → Groq
-Model    → openai/gpt-oss-120b
+Provider → Atria
+Model    → Atria-Dawn-Preview
 ```
 
 jumlah variable yang harus diisi di Railway menjadi lebih sedikit.
@@ -475,7 +485,7 @@ jumlah variable yang harus diisi di Railway menjadi lebih sedikit.
 Credential rahasia tetap disimpan di Railway:
 
 ```text
-GROQ_API_KEY
+ATRIA_API_KEY
 TELEGRAM_BOT_TOKEN
 DISCORD_BOT_TOKEN
 ```
@@ -485,9 +495,7 @@ DISCORD_BOT_TOKEN
 ## 📚 Referensi
 
 - Hermes Agent — dokumentasi provider
-- Groq — dokumentasi model
-- Groq — dokumentasi rate limits
-- OpenAI GPT-OSS 120B — halaman model di Groq
+- Atria — console & dokumentasi API (`https://api.atria-asi.ai/console`)
 - Railway — dokumentasi deployment
 
 ---
@@ -502,10 +510,10 @@ Hermes Agent
 ├── Discord
 │
 ├── Provider
-│   └── Groq
+│   └── Atria
 │
 ├── Model
-│   └── openai/gpt-oss-120b
+│   └── Atria-Dawn-Preview
 │
 ├── Fallback
 │   └── Tidak ada
