@@ -41,7 +41,27 @@ cfg["model"] = {
 # ============================================================
 
 cfg.setdefault("agent", {})
-cfg["agent"]["reasoning_effort"] = "medium"
+cfg["agent"]["reasoning_effort"] = "low"
+
+# ============================================================
+# COMPRESSION - COMPRESS HISTORY EARLIER TO SAVE TOKENS
+# ============================================================
+
+cfg["compression"] = {
+    "enabled": True,
+    "threshold": 0.3
+}
+
+# ============================================================
+# MEMORY - SMALLER LIMITS TO REDUCE PER-SESSION TOKEN COST
+# ============================================================
+
+cfg["memory"] = {
+    "memory_enabled": True,
+    "user_profile_enabled": True,
+    "memory_char_limit": 1200,
+    "user_char_limit": 800
+}
 
 # ============================================================
 # CUSTOM PROVIDERS - ATRIA (primary) + GROQ (fallback)
@@ -89,7 +109,15 @@ print("  Provider : custom:atria")
 print("  Model    : Atria-Dawn-Preview")
 print("")
 print("REASONING:")
-print("  Effort   : medium")
+print("  Effort   : low")
+print("")
+print("COMPRESSION:")
+print("  Enabled  : True")
+print("  Threshold: 0.3")
+print("")
+print("MEMORY:")
+print("  Memory char limit : 1200")
+print("  User char limit   : 800")
 print("")
 print("API:")
 print("  Endpoint : https://api.atria-asi.ai/v1")
