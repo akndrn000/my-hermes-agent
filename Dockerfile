@@ -28,12 +28,12 @@ if not isinstance(cfg, dict):
     cfg = {}
 
 # ============================================================
-# PRIMARY MODEL - GROQ GPT-OSS 120B
+# PRIMARY MODEL - ATRIA DAWN PREVIEW
 # ============================================================
 
 cfg["model"] = {
-    "default": "openai/gpt-oss-120b",
-    "provider": "custom:groq"
+    "default": "Atria-Dawn-Preview",
+    "provider": "custom:atria"
 }
 
 # ============================================================
@@ -44,13 +44,13 @@ cfg.setdefault("agent", {})
 cfg["agent"]["reasoning_effort"] = "medium"
 
 # ============================================================
-# CUSTOM PROVIDER - GROQ
+# CUSTOM PROVIDERS - ATRIA (primary) + GROQ (fallback)
 # ============================================================
 
 cfg["providers"] = {
-    "groq": {
-        "api": "https://api.groq.com/openai/v1",
-        "key_env": "GROQ_API_KEY"
+    "atria": {
+        "api": "https://api.atria-asi.ai/v1",
+        "key_env": "ATRIA_API_KEY"
     }
 }
 
@@ -58,7 +58,7 @@ cfg["providers"] = {
 # API MODE
 # ============================================================
 
-cfg["providers"]["groq"]["api_mode"] = "chat_completions"
+cfg["providers"]["atria"]["api_mode"] = "chat_completions"
 
 # ============================================================
 # NO FALLBACK
@@ -85,14 +85,14 @@ print("HERMES MODEL CONFIG")
 print("========================================")
 print("")
 print("PRIMARY:")
-print("  Provider : custom:groq")
-print("  Model    : openai/gpt-oss-120b")
+print("  Provider : custom:atria")
+print("  Model    : Atria-Dawn-Preview")
 print("")
 print("REASONING:")
 print("  Effort   : medium")
 print("")
 print("API:")
-print("  Endpoint : https://api.groq.com/openai/v1")
+print("  Endpoint : https://api.atria-asi.ai/v1")
 print("  Mode     : chat_completions")
 print("")
 print("FALLBACKS:")
