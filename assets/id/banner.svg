@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 360" width="1280" height="360" role="img" aria-labelledby="t d">
+  <title id="t">Hermes Agent</title>
+  <desc id="d">Agen AI pribadi untuk Telegram dan Discord, di-deploy di Railway dan ditenagai Atria Dawn Preview.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#060A14"/><stop offset="1" stop-color="#140F33"/></linearGradient>
+    <linearGradient id="ac" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#22D3EE"/><stop offset="1" stop-color="#A78BFA"/></linearGradient>
+    <linearGradient id="ac2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22D3EE"/><stop offset="0.55" stop-color="#8B5CF6"/><stop offset="1" stop-color="#EC4899"/></linearGradient>
+    <radialGradient id="gA" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#22D3EE" stop-opacity="0.22"/><stop offset="1" stop-color="#22D3EE" stop-opacity="0"/></radialGradient>
+    <radialGradient id="gB" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#8B5CF6" stop-opacity="0.28"/><stop offset="1" stop-color="#8B5CF6" stop-opacity="0"/></radialGradient>
+    <radialGradient id="core" cx="0.4" cy="0.35" r="0.75"><stop offset="0" stop-color="#A5F3FC"/><stop offset="0.45" stop-color="#8B5CF6"/><stop offset="1" stop-color="#EC4899"/></radialGradient>
+    <pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse"><path d="M36 0H0V36" fill="none" stroke="#94A3B8" stroke-opacity="0.07"/></pattern>
+    <marker id="ar" markerUnits="userSpaceOnUse" markerWidth="14" markerHeight="14" refX="11" refY="7" orient="auto"><path d="M0,1 L12,7 L0,13 z" fill="#67E8F9"/></marker>
+  </defs>
+  <style>
+    .sans{font-family:'Inter','Segoe UI',system-ui,-apple-system,Arial,sans-serif} .mono{font-family:ui-monospace,'SF Mono','JetBrains Mono',Consolas,'Courier New',monospace}
+    .h1{font-family:'Inter','Segoe UI',system-ui,-apple-system,Arial,sans-serif;font-weight:800;fill:#F8FAFC}
+    .h2{font-family:'Inter','Segoe UI',system-ui,-apple-system,Arial,sans-serif;font-weight:700;fill:#F1F5F9}
+    .mu{font-family:ui-monospace,'SF Mono','JetBrains Mono',Consolas,'Courier New',monospace;fill:#94A3B8}
+    .lb{font-family:ui-monospace,'SF Mono','JetBrains Mono',Consolas,'Courier New',monospace;font-weight:700;letter-spacing:1.5px}
+    .flow{stroke-dasharray:6 6;animation:fl 1.2s linear infinite}
+    @keyframes fl{to{stroke-dashoffset:-12}}
+  </style>
+  <rect width="1280" height="360" rx="22" fill="url(#bg)"/>
+  <rect width="1280" height="360" rx="22" fill="url(#grid)"/>
+  <circle cx="153" cy="0" r="300" fill="url(#gA)"/>
+  <circle cx="1177" cy="360" r="320" fill="url(#gB)"/>
+  <rect x="70" y="62" width="331" height="32" rx="16" fill="#0F172A" stroke="#22D3EE" stroke-opacity="0.5"/>
+  <circle cx="92" cy="78" r="5" fill="#34D399"><animate attributeName="opacity" values="1;0.35;1" dur="2s" repeatCount="indefinite"/></circle>
+  <text x="108" y="83" class="lb" font-size="12" fill="#67E8F9">AGEN AKTIF · TELEGRAM · DISCORD</text>
+  <text x="70" y="168" class="h1" font-size="72" style="fill:url(#ac2)">Hermes Agent</text>
+  <text x="72" y="210" class="sans" font-size="22" fill="#CBD5E1">Agen AI pribadimu di Telegram dan Discord.</text>
+  <text x="72" y="240" class="sans" font-size="22" fill="#CBD5E1">Di-deploy di Railway, ditenagai Atria Dawn Preview.</text>
+  <rect x="72" y="274" width="248" height="34" rx="17" fill="#22D3EE" fill-opacity="0.12" stroke="#22D3EE" stroke-opacity="0.7"/>
+  <text x="196.0" y="296" text-anchor="middle" class="mono" font-weight="700" font-size="14" fill="#22D3EE">Resmi dari Nous Research</text>
+  <rect x="334" y="274" width="196" height="34" rx="17" fill="#A78BFA" fill-opacity="0.12" stroke="#A78BFA" stroke-opacity="0.7"/>
+  <text x="432.0" y="296" text-anchor="middle" class="mono" font-weight="700" font-size="14" fill="#A78BFA">Atria-Dawn-Preview</text>
+  <rect x="544" y="274" width="66" height="34" rx="17" fill="#34D399" fill-opacity="0.12" stroke="#34D399" stroke-opacity="0.7"/>
+  <text x="577.0" y="296" text-anchor="middle" class="mono" font-weight="700" font-size="14" fill="#34D399">MIT</text>
+  <circle cx="1040" cy="180" r="150" fill="url(#gB)"/>
+  <circle cx="1040" cy="180" r="60" fill="none" stroke="#22D3EE" stroke-opacity="0.5" stroke-dasharray="4 7"/>
+  <circle cx="1040" cy="180" r="100" fill="none" stroke="#22D3EE" stroke-opacity="0.3" stroke-dasharray="4 7"/>
+  <circle cx="1040" cy="180" r="140" fill="none" stroke="#22D3EE" stroke-opacity="0.18" stroke-dasharray="4 7"/>
+  <line x1="1040" y1="180" x2="930" y2="92" stroke="#38BDF8" stroke-opacity="0.6" stroke-width="2" class="flow"/>
+  <line x1="1040" y1="180" x2="920" y2="262" stroke="#818CF8" stroke-opacity="0.6" stroke-width="2" class="flow"/>
+  <line x1="1040" y1="180" x2="1160" y2="98" stroke="#F472B6" stroke-opacity="0.6" stroke-width="2" class="flow"/>
+  <line x1="1040" y1="180" x2="1158" y2="262" stroke="#34D399" stroke-opacity="0.6" stroke-width="2" class="flow"/>
+  <circle cx="930" cy="92" r="34" fill="#38BDF8" fill-opacity="0.12"/>
+  <circle cx="930" cy="92" r="26" fill="#0F172A" stroke="#38BDF8" stroke-width="2"/>
+  <text x="930" y="97" text-anchor="middle" class="mono" font-weight="800" font-size="14" fill="#38BDF8">TG</text>
+  <circle cx="920" cy="262" r="34" fill="#818CF8" fill-opacity="0.12"/>
+  <circle cx="920" cy="262" r="26" fill="#0F172A" stroke="#818CF8" stroke-width="2"/>
+  <text x="920" y="267" text-anchor="middle" class="mono" font-weight="800" font-size="14" fill="#818CF8">DC</text>
+  <circle cx="1160" cy="98" r="34" fill="#F472B6" fill-opacity="0.12"/>
+  <circle cx="1160" cy="98" r="26" fill="#0F172A" stroke="#F472B6" stroke-width="2"/>
+  <text x="1160" y="103" text-anchor="middle" class="mono" font-weight="800" font-size="14" fill="#F472B6">AI</text>
+  <circle cx="1158" cy="262" r="34" fill="#34D399" fill-opacity="0.12"/>
+  <circle cx="1158" cy="262" r="26" fill="#0F172A" stroke="#34D399" stroke-width="2"/>
+  <text x="1158" y="267" text-anchor="middle" class="mono" font-weight="800" font-size="14" fill="#34D399">&lt;/&gt;</text>
+  <circle cx="1040" cy="180" r="46" fill="#22D3EE" fill-opacity="0.12"/>
+  <circle cx="1040" cy="180" r="36" fill="url(#core)"/>
+  <path d="M1040 164 L1046 174 L1056 180 L1046 186 L1040 196 L1034 186 L1024 180 L1034 174 Z" fill="#fff" fill-opacity="0.95"/>
+
+</svg>

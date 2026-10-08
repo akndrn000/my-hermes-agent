@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 470" width="1200" height="470" role="img" aria-labelledby="t d">
+  <title id="t">Alur pesan</title>
+  <desc id="d">Pesan dari Telegram dan Discord masuk ke Hermes Agent di Railway, yang memanggil Atria API dan model Atria Dawn Preview, lalu membalas di chat yang sama.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#060A14"/><stop offset="1" stop-color="#140F33"/></linearGradient>
+    <linearGradient id="ac" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#22D3EE"/><stop offset="1" stop-color="#A78BFA"/></linearGradient>
+    <linearGradient id="ac2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22D3EE"/><stop offset="0.55" stop-color="#8B5CF6"/><stop offset="1" stop-color="#EC4899"/></linearGradient>
+    <radialGradient id="gA" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#22D3EE" stop-opacity="0.22"/><stop offset="1" stop-color="#22D3EE" stop-opacity="0"/></radialGradient>
+    <radialGradient id="gB" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#8B5CF6" stop-opacity="0.28"/><stop offset="1" stop-color="#8B5CF6" stop-opacity="0"/></radialGradient>
+    <radialGradient id="core" cx="0.4" cy="0.35" r="0.75"><stop offset="0" stop-color="#A5F3FC"/><stop offset="0.45" stop-color="#8B5CF6"/><stop offset="1" stop-color="#EC4899"/></radialGradient>
+    <pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse"><path d="M36 0H0V36" fill="none" stroke="#94A3B8" stroke-opacity="0.07"/></pattern>
+    <marker id="ar" markerUnits="userSpaceOnUse" markerWidth="14" markerHeight="14" refX="11" refY="7" orient="auto"><path d="M0,1 L12,7 L0,13 z" fill="#67E8F9"/></marker>
+  </defs>
+  <style>
+    .sans{font-family:'Inter','Segoe UI',system-ui,-apple-system,Arial,sans-serif} .mono{font-family:ui-monospace,'SF Mono','JetBrains Mono',Consolas,'Courier New',monospace}
+    .h1{font-family:'Inter','Segoe UI',system-ui,-apple-system,Arial,sans-serif;font-weight:800;fill:#F8FAFC}
+    .h2{font-family:'Inter','Segoe UI',system-ui,-apple-system,Arial,sans-serif;font-weight:700;fill:#F1F5F9}
+    .mu{font-family:ui-monospace,'SF Mono','JetBrains Mono',Consolas,'Courier New',monospace;fill:#94A3B8}
+    .lb{font-family:ui-monospace,'SF Mono','JetBrains Mono',Consolas,'Courier New',monospace;font-weight:700;letter-spacing:1.5px}
+    .flow{stroke-dasharray:6 6;animation:fl 1.2s linear infinite}
+    @keyframes fl{to{stroke-dashoffset:-12}}
+  </style>
+  <rect width="1200" height="470" rx="22" fill="url(#bg)"/>
+  <rect width="1200" height="470" rx="22" fill="url(#grid)"/>
+  <circle cx="144" cy="0" r="300" fill="url(#gA)"/>
+  <circle cx="1104" cy="470" r="320" fill="url(#gB)"/>
+  <text x="40" y="52" class="h1" font-size="26">Alur pesan</text>
+  <rect x="40" y="64" width="64" height="3" rx="1.5" fill="url(#ac)"/>
+  <text x="120" y="69" class="mu" font-size="13">chat → agen → model → balasan</text>
+  <rect x="40" y="120" width="220" height="96" rx="16" fill="none" stroke="#38BDF8" stroke-opacity="0.14" stroke-width="7"/>
+  <rect x="40" y="120" width="220" height="96" rx="16" fill="#0F172A" fill-opacity="0.92" stroke="#38BDF8" stroke-opacity="0.65" stroke-width="1.5"/>
+  <circle cx="66" cy="154" r="13.200000000000001" fill="#38BDF8" fill-opacity="0.15"/>
+  <circle cx="66" cy="154" r="6" fill="#38BDF8"/>
+  <text x="86" y="160" class="h2" font-size="20">Telegram</text>
+  <text x="62" y="190" class="mu" font-size="13">TELEGRAM_BOT_TOKEN</text>
+  <rect x="40" y="250" width="220" height="96" rx="16" fill="none" stroke="#818CF8" stroke-opacity="0.14" stroke-width="7"/>
+  <rect x="40" y="250" width="220" height="96" rx="16" fill="#0F172A" fill-opacity="0.92" stroke="#818CF8" stroke-opacity="0.65" stroke-width="1.5"/>
+  <circle cx="66" cy="284" r="13.200000000000001" fill="#818CF8" fill-opacity="0.15"/>
+  <circle cx="66" cy="284" r="6" fill="#818CF8"/>
+  <text x="86" y="290" class="h2" font-size="20">Discord</text>
+  <text x="62" y="320" class="mu" font-size="13">DISCORD_BOT_TOKEN</text>
+  <rect x="340" y="96" width="440" height="300" rx="22" fill="#0B1224" fill-opacity="0.6" stroke="#22D3EE" stroke-opacity="0.45" stroke-dasharray="8 6" stroke-width="1.5"/>
+  <text x="364" y="124" class="lb" font-size="12" fill="#67E8F9">RAILWAY SERVICE</text>
+  <rect x="370" y="142" width="380" height="126" rx="16" fill="none" stroke="#22D3EE" stroke-opacity="0.14" stroke-width="7"/>
+  <rect x="370" y="142" width="380" height="126" rx="16" fill="#0F172A" fill-opacity="0.92" stroke="#22D3EE" stroke-opacity="0.65" stroke-width="1.5"/>
+  <circle cx="414" cy="205" r="34" fill="#22D3EE" fill-opacity="0.14"/>
+  <circle cx="414" cy="205" r="25" fill="url(#core)"/>
+  <path d="M414 191 L419 200 L428 205 L419 210 L414 219 L409 210 L400 205 L409 200 Z" fill="#fff"/>
+  <text x="462" y="196" class="h2" font-size="24">Hermes Agent</text>
+  <text x="462" y="220" class="mu" font-size="13">nousresearch/hermes-agent</text>
+  <text x="462" y="240" class="mu" font-size="13">Gateway Telegram + Discord</text>
+  <rect x="370" y="290" width="380" height="80" rx="16" fill="none" stroke="#34D399" stroke-opacity="0.14" stroke-width="7"/>
+  <rect x="370" y="290" width="380" height="80" rx="16" fill="#0F172A" fill-opacity="0.92" stroke="#34D399" stroke-opacity="0.65" stroke-width="1.5"/>
+  <circle cx="396" cy="330" r="13.200000000000001" fill="#34D399" fill-opacity="0.15"/>
+  <circle cx="396" cy="330" r="6" fill="#34D399"/>
+  <text x="416" y="324" class="h2" font-size="18">Volume</text>
+  <text x="416" y="348" class="mu" font-size="13">mount path /opt/data · data persisten</text>
+  <rect x="860" y="110" width="300" height="112" rx="16" fill="none" stroke="#F472B6" stroke-opacity="0.14" stroke-width="7"/>
+  <rect x="860" y="110" width="300" height="112" rx="16" fill="#0F172A" fill-opacity="0.92" stroke="#F472B6" stroke-opacity="0.65" stroke-width="1.5"/>
+  <circle cx="888" cy="146" r="13.200000000000001" fill="#F472B6" fill-opacity="0.15"/>
+  <circle cx="888" cy="146" r="6" fill="#F472B6"/>
+  <text x="908" y="152" class="h2" font-size="20">Atria API</text>
+  <text x="884" y="182" class="mu" font-size="13">api.atria-asi.ai/v1</text>
+  <text x="884" y="202" class="mu" font-size="13">kompatibel OpenAI</text>
+  <rect x="860" y="272" width="300" height="112" rx="16" fill="none" stroke="#A78BFA" stroke-opacity="0.14" stroke-width="7"/>
+  <rect x="860" y="272" width="300" height="112" rx="16" fill="#0F172A" fill-opacity="0.92" stroke="#A78BFA" stroke-opacity="0.65" stroke-width="1.5"/>
+  <circle cx="888" cy="308" r="13.200000000000001" fill="#A78BFA" fill-opacity="0.15"/>
+  <circle cx="888" cy="308" r="6" fill="#A78BFA"/>
+  <text x="908" y="314" class="h2" font-size="20">Atria Dawn Preview</text>
+  <text x="884" y="344" class="mu" font-size="13">Atria-Dawn-Preview</text>
+  <text x="884" y="364" class="mu" font-size="13">hanya input teks</text>
+  <path d="M262 168 L368 196" fill="none" stroke="#67E8F9" stroke-width="2" marker-end="url(#ar)" class="flow"/>
+  <path d="M262 298 L368 236" fill="none" stroke="#67E8F9" stroke-width="2" marker-end="url(#ar)" class="flow"/>
+  <path d="M752 196 L858 164" fill="none" stroke="#67E8F9" stroke-width="2" marker-end="url(#ar)" class="flow"/>
+  <path d="M1010 224 L1010 270" fill="none" stroke="#67E8F9" stroke-width="2" marker-end="url(#ar)" class="flow"/>
+  <text x="790" y="246" class="mu" font-size="12">custom:atria</text>
+  <text x="1024" y="252" class="mu" font-size="12">chat completion</text>
+  <line x1="40" y1="424" x2="1160" y2="424" stroke="#94A3B8" stroke-opacity="0.2"/>
+  <text x="40" y="450" class="mu" font-size="14">chat masuk  →  Hermes Agent  →  Atria  →  Atria Dawn Preview  →  balasan kembali ke chat yang sama</text>
+
+</svg>
