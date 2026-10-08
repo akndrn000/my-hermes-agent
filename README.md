@@ -10,7 +10,7 @@
   <img alt="Docker" src="https://img.shields.io/badge/runtime-Docker-2496ed">
 </p>
 
-# Hermes Agent: Telegram & Discord Bot di Railway
+# Durian Agent: MAPPING & QGIS INSTAL
 
 Konfigurasi siap deploy untuk menjalankan **[Hermes Agent](https://github.com/NousResearch/hermes-agent)** resmi (Nous Research) sebagai bot pribadi di **Telegram** dan **Discord**, dengan **Atria** (`Atria-Dawn-Preview`) sebagai satu-satunya provider model.
 
